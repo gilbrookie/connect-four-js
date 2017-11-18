@@ -1,0 +1,26 @@
+{
+  "name": "connect-four-js",
+  "version": "0.0.1",
+  "description": "A simple javascript implementation of the game Connect Four",
+  "main": "connectFour.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gilbrookie/connect-four-js.git"
+  },
+  "keywords": [
+    "javascript",
+    "game"
+  ],
+  "author": "gilbrookie",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gilbrookie/connect-four-js/issues"
+  },
+  "homepage": "https://github.com/gilbrookie/connect-four-js#readme",
+  "dependencies": {
+    "readline-sync": "^1.4.7"
+  }
+}
