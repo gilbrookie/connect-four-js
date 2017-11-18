@@ -63,17 +63,28 @@ class Board {
     return false;
   }
 
-  isPlayable(x, y) {
-    // Boundary check for the row value
-    // if a tile is played in every row, you can't play that column anymore
-    if (!this.board[x]) {
+  isValid(x, y) {
+    // Boundary checks for the board
+    // Top of the board, bottom of the board
+    if (!this.board[x] || x < 0) {
       return false;
     }
 
-    if(x === 0) {
-      return true;
+    // Min/Max columns
+    if (y < 0 || y >= this.board.length) {
+      return false;
+    }
+    return true;
+  }
+
+  isPlayable(x, y) {
+    if (!this.isValid) {
+      return false;
     }
 
+    if (x === 0) {
+      return true;
+    }
     // is the current space open AND does the space below the current position have a piece
     if (this.isEmptySpace(x, y) && (this.board[x - 1][y] !== 0)) {
       return true;
@@ -212,7 +223,7 @@ class Game {
 
   checkNextTile(x, y, direction) {
     // get a snapshot of the board;
-    const _b = this.board.board;
+    const _b = this.board.get();
     const startValue = _b[x][y];
     let nextValue;
     let count = 0;
@@ -222,50 +233,52 @@ class Game {
     while (true) {
       switch(direction) {
         case DIRECTION.LEFT:
-          if (col <= 0) {
-            return count;
-          }
           col = col - 1;
-          nextValue = _b[x][col];
           break;
 
         case DIRECTION.RIGHT:
-          if (col >= _b.length) {
-            break;
-          }
           col = col + 1;
-          nextValue = _b[x][col];
-          // console.log(`==> ****x: ${row}, y: ${col}, startValue: ${startValue}, nextValue: ${nextValue}`);
           break;
 
         case DIRECTION.UP:
-          // reached the top
-          if (!_b[row]) {
-            break;
-          }
           row = row + 1;
-          nextValue = _b[row][y];
           break;
 
         case DIRECTION.DOWN:
-          if (row <= 0) {
-            return count;
-          }
           row = row - 1;
-          nextValue = _b[row][y];
+          break;
+
+        case DIRECTION.DIAG_UP_RIGHT:
+          col = col + 1;
+          row = row + 1;
+          break;
+
+        case DIRECTION.DIAG_DOWN_LEFT:
+          col = col - 1;
+          row = row - 1;
+          break;
+
+        case DIRECTION.DIAG_UP_LEFT:
+          col = col -1;
+          row = row + 1;
+          break;
+
+        case DIRECTION.DIAG_DOWN_RIGHT:
+          col = col + 1;
+          row = row - 1;
           break;
       }
 
+      if (!this.board.isValid(row, col)) {
+        return count;
+      }
+      nextValue = _b[row][col];
       if (nextValue != startValue) {
         // exit the loop
         break;
       }
       count += 1;
       console.log(`==> count: ${count}, x: ${row}, y: ${col}, startValue: ${startValue}, nextValue: ${nextValue}`);
-
-      if (count >= 6) {
-        break;
-      }
     }
 
     return count;
@@ -273,16 +286,30 @@ class Game {
 
   calculateWinner(x, y, player) {
     const countLeft = this.checkNextTile(x, y, DIRECTION.LEFT);
-    // const countLeft = 0;
     const countRight = this.checkNextTile(x, y, DIRECTION.RIGHT);
     const rowCount = 1 + countLeft + countRight;
     console.log('ROW COUNT', rowCount);
 
+    // for columns, we only need to do the downward direction - thanks gravity
     const countDown = this.checkNextTile(x, y, DIRECTION.DOWN);
     const colCount = 1 + countDown;
     console.log('COLUMN Count', colCount);
 
-    if (rowCount === this.rules.winningCount || colCount === this.rules.winningCount ) {
+    const countDiagUpRight = this.checkNextTile(x, y, DIRECTION.DIAG_UP_RIGHT);
+    const countDiagDownLeft = this.checkNextTile(x, y, DIRECTION.DIAG_DOWN_LEFT);
+    const diagCount1 = 1 + countDiagDownLeft + countDiagUpRight;
+    console.log('Diag count', diagCount1);
+
+    const countDiagUpLeft = this.checkNextTile(x, y, DIRECTION.DIAG_UP_LEFT);
+    const countDiagDownRight = this.checkNextTile(x, y, DIRECTION.DIAG_DOWN_RIGHT);
+    const diagCount2 = 1 + countDiagDownRight + countDiagUpLeft;
+    console.log('Diag count', diagCount2);
+
+    if (rowCount === this.rules.winningCount ||
+      colCount === this.rules.winningCount ||
+      diagCount1 === this.rules.winningCount ||
+      diagCount2 === this.rules.winningCount ) {
+
       console.log('\n******* GAME OVER *********');
       this.board.printBoard();
       console.log('\n****** WE HAVE A WINNER *******\n');
