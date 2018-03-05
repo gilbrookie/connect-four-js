@@ -4,7 +4,7 @@
   "description": "A simple javascript implementation of the game Connect Four",
   "main": "connectFour.js",
   "scripts": {
-    "test": "npm test",
+    "test": "jest",
     "bundle": "webpack",
     "server": "node node_modules/.bin/http-server",
     "cli_game": "node connect_four.js"
@@ -25,6 +25,7 @@
   "homepage": "https://github.com/gilbrookie/connect-four-js#readme",
   "dependencies": {
     "http-server": "^0.10.0",
+    "jest": "^22.4.2",
     "p5": "^0.5.16",
     "readline-sync": "^1.4.7",
     "webpack": "^3.10.0"
