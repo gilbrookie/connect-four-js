@@ -1,5 +1,5 @@
-const { Board } = require('../lib/Board');
-const { EMPTY } = require('../lib/utils');
+import { Board } from '../lib/Board';
+import { EMPTY } from '../lib/utils';
 
 describe('Board Tests', () => {
   describe('constructor', () => {
@@ -100,7 +100,7 @@ describe('Board Tests', () => {
       expect(board.isValid(1.2, 0)).toBeFalsy();
     });
 
-    it('should return false when column value is out of range', () => {
+    it('should return false when row value is out of range', () => {
       // all cases should return false
       expect(board.isValid(0, -1)).toBeFalsy();
       expect(board.isValid(0, 5)).toBeFalsy();
@@ -110,27 +110,35 @@ describe('Board Tests', () => {
   describe('isPlayable()', () => {
     let board;
     beforeAll(() => {
-      board = new Board(1,1)
+      board = new Board(2,5)
+      // board.printBoard();
       const testBoard = [
         [1, 0, 1, 1, 1],
         [1, 0, 0, 0, 0],
       ];
       // Initialize a board object, then override the board data
       board.board = testBoard;
-      board.printBoard();
+      // board.printBoard();
     });
 
     it('should return true if the bottom row is empty', () => {
       expect(board.isPlayable(0, 1)).toBeTruthy();
     });
+
     it('should return true if the location below is occupied', () => {
-      expect(board.isPlayable(2, 1)).toBeTruthy();
+      expect(board.isPlayable(1, 2)).toBeTruthy();
     });
-    it('should return false if the location is invalid', ()  => {});
+
+    it('should return false if the location is invalid', ()  => {
+      expect(board.isPlayable(3, 7)).toBeFalsy();
+      expect(board.isPlayable("1", 0)).toBeFalsy();
+      expect(board.isPlayable(0, 9)).toBeFalsy();
+    });
+
     it('should return false if the location is occupied', () => {});
     it('should return false if the location below is empty', () => {});
 
-  })
+  });
 
   describe('playTile()', () => {});
 });
