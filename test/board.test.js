@@ -1,5 +1,5 @@
-import { Board } from '../lib/Board';
-import { EMPTY } from '../lib/utils';
+const { Board } = require('../lib/Board');
+const { EMPTY } = require('../lib/utils');
 
 describe('Board Tests', () => {
   describe('constructor', () => {
@@ -35,22 +35,27 @@ describe('Board Tests', () => {
   describe('findCurrentRow()', () => {
     let board;
     beforeAll(() => {
-      board = new Board(1,1)
+      board = new Board(5,5);
       const testBoard = [
-        [1, 0, 1, 1, 1],
+        [0, 0, 0, 0, 0],
         [1, 0, 0, 0, 0],
+        [1, 1, 1, 1, 0],
+        [1, 1, 0, 0, 0],
+        [1, 1, 1, 1, 1],  // Row overflow!
       ];
       // Initialize a board object, then override the board data
       board.board = testBoard;
     });
 
     it('should return the lowest playable row for a given column', () => {
-      expect(board.findCurrentRow(1)).toBe(0);
-      expect(board.findCurrentRow(2)).toBe(1);
-    });
+      expect(board.findCurrentRow(0)).toBe(0);
+      expect(board.findCurrentRow(1)).toBe(1);
+      expect(board.findCurrentRow(2)).toBe(4);
+      expect(board.findCurrentRow(3)).toBe(2);
+    })
 
     it('should return undefined if the current row not within range', () => {
-      expect(board.findCurrentRow(0)).toBeUndefined();
+      expect(board.findCurrentRow(4)).toBeUndefined();
     });
   });
 
@@ -74,7 +79,7 @@ describe('Board Tests', () => {
       expect(board.isEmptySpace(0, 0)).toBeFalsy();
     });
 
-    it.skip('should return false if the field is out of range', () => {
+    it('should return false if the field is out of range', () => {
       expect(board.isEmptySpace(6, 3)).toBeFalsy();
     });
 
@@ -85,7 +90,7 @@ describe('Board Tests', () => {
     beforeAll(() => {
       board = new Board(1,1)
       const testBoard = [
-        [1, 0, 1, 1, 1],
+        [1, 1, 1, 1, 1],
         [1, 0, 0, 0, 0],
       ];
       // Initialize a board object, then override the board data
@@ -103,7 +108,7 @@ describe('Board Tests', () => {
     it('should return false when row value is out of range', () => {
       // all cases should return false
       expect(board.isValid(0, -1)).toBeFalsy();
-      expect(board.isValid(0, 5)).toBeFalsy();
+      expect(board.isValid(0, 6)).toBeFalsy();
     });
   });
 
@@ -130,8 +135,8 @@ describe('Board Tests', () => {
     });
 
     it('should return false if the location is invalid', ()  => {
-      expect(board.isPlayable(3, 7)).toBeFalsy();
-      expect(board.isPlayable("1", 0)).toBeFalsy();
+      expect(board.isPlayable(2, 0)).toBeFalsy();
+      expect(board.isPlayable('One', 0)).toBeFalsy();
       expect(board.isPlayable(0, 9)).toBeFalsy();
     });
 
